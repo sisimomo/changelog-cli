@@ -25,6 +25,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
+          project_path: ./cmd/changelog-cl
           binary_name: "changelog-cli"
 
   build-docker-image:

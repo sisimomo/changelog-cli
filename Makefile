@@ -24,10 +24,10 @@ build-docker-image:
 	docker buildx build --platform linux/amd64,linux/arm64 -t sisimomo/changelog-cli . --push
 
 gox-linux:
-	gox -osarch="linux/amd64 linux/arm64" -output="build/changelog-cli_{{.OS}}_{{.Arch}}" cmd/changelog-cli
+	gox -osarch="linux/amd64 linux/arm64" -output="build/changelog-cli_{{.OS}}_{{.Arch}}" ./cmd/changelog-cli
 
 gox-all:
-	gox -osarch="darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 windows/amd64" -output="build/changelog-cli_{{.OS}}_{{.Arch}}" cmd/changelog-cli
+	gox -osarch="darwin/amd64 darwin/arm64 linux/amd64 linux/arm64 windows/amd64" -output="build/changelog-cli_{{.OS}}_{{.Arch}}" ./cmd/changelog-cli
 
 clean:
 	rm -f build/changelog-cli_*

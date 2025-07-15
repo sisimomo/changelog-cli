@@ -17,6 +17,8 @@ type Commit struct {
 	Date        time.Time
 }
 
+var headerRegex = regexp.MustCompile(`^([a-zA-Z]+)(?:\(([^)]+)\))?:\s*(.*)$`)
+
 // IsGitRepository returns an error if path is not a valid git repo.
 func IsGitRepository(path string) error {
 	out, err := exec.Command("git", "-C", path, "rev-parse", "--is-inside-work-tree").Output()
@@ -118,7 +120,6 @@ func parseCommit(message string) *Commit {
 	lines := strings.Split(message, "\n")
 
 	commit := &Commit{}
-	headerRegex := regexp.MustCompile(`^([a-zA-Z]+)(?:\(([^)]+)\))?:\s*(.*)$`)
 	if matches := headerRegex.FindStringSubmatch(lines[0]); len(matches) > 0 {
 		commit.Type = matches[1]
 		commit.Scope = matches[2]

@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - run: go install github.com/mitchellh/gox@latest # setup gox
       - run: make gox-linux
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/arm64,linux/amd64

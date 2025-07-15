@@ -17,36 +17,7 @@ type Commit struct {
 	Date        time.Time
 }
 
-// ParseCommit parses a raw commit message and returns a Commit struct.
-func ParseCommit(message string) *Commit {
-	lines := strings.Split(message, "\n")
-
-	commit := &Commit{}
-	headerRegex := regexp.MustCompile(`^([a-zA-Z]+)(?:\(([^)]+)\))?:\s*(.*)$`)
-	if matches := headerRegex.FindStringSubmatch(lines[0]); len(matches) > 0 {
-		commit.Type = matches[1]
-		commit.Scope = matches[2]
-		commit.Description = matches[3]
-	} else {
-		commit.Description = lines[0]
-	}
-
-	if len(lines) > 1 {
-		commit.Body = strings.TrimSpace(strings.Join(lines[1:], "\n"))
-	}
-
-	return commit
-}
-
-// ParseCommitWithDate returns a Commit with parsed message and a parsed time.Time.
-func ParseCommitWithDate(message, dateStr string) *Commit {
-	commit := ParseCommit(message)
-	t, err := time.Parse(time.RFC3339, dateStr)
-	if err == nil {
-		commit.Date = t
-	}
-	return commit
-}
+var headerRegex = regexp.MustCompile(`^([a-zA-Z]+)(?:\(([^)]+)\))?:\s*(.*)$`)
 
 // IsGitRepository returns an error if path is not a valid git repo.
 func IsGitRepository(path string) error {
@@ -128,8 +99,38 @@ func parseCommitsWithDate(raw, sep string) []*Commit {
 		if len(lines) < 2 {
 			continue
 		}
-		commits = append(commits, ParseCommitWithDate(lines[1], lines[0]))
+		commits = append(commits, parseCommitWithDate(lines[1], lines[0]))
 	}
 
 	return commits
+}
+
+// parseCommitWithDate returns a Commit with parsed message and a parsed time.Time.
+func parseCommitWithDate(message, dateStr string) *Commit {
+	commit := parseCommit(message)
+	t, err := time.Parse(time.RFC3339, dateStr)
+	if err == nil {
+		commit.Date = t
+	}
+	return commit
+}
+
+// parseCommit parses a raw commit message and returns a Commit struct.
+func parseCommit(message string) *Commit {
+	lines := strings.Split(message, "\n")
+
+	commit := &Commit{}
+	if matches := headerRegex.FindStringSubmatch(lines[0]); len(matches) > 0 {
+		commit.Type = matches[1]
+		commit.Scope = matches[2]
+		commit.Description = matches[3]
+	} else {
+		commit.Description = lines[0]
+	}
+
+	if len(lines) > 1 {
+		commit.Body = strings.TrimSpace(strings.Join(lines[1:], "\n"))
+	}
+
+	return commit
 }

@@ -49,3 +49,16 @@ jobs:
           platforms: linux/arm64,linux/amd64
           push: true
           tags: sisimomo/changelog-cli:${{ github.event.release.tag_name }}
+
+  sync-dockerhub-readme:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Upload README to Docker Hub
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: sisimomo/changelog-cli
